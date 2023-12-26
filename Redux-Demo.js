@@ -10,6 +10,15 @@ const counterReducer = (state = { counter: 0 }, action) => {
         // console.log('decrementing');
         return { counter: state.counter - 1 };
     }
+    if (action.type === "INCREMENTBY2") {
+        // console.log('decrementing');
+        return { counter: state.counter +2};
+    }
+    if (action.type === "DECREMENTBY2") {
+       
+        return { counter: state.counter - 2};
+    }
+
     return state;
 };
 
@@ -31,3 +40,5 @@ store.dispatch({type:"Increment"})//state will be consoled only when the dispatc
 // store.dispatch({type:"Increment"})
 
 store.dispatch({type:"Decrement"})
+store.dispatch({type:"INCREMENTBY2"})
+store.dispatch({type:"DECREMENTBY2"})
