@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import { uiActions ,cartActions } from "./store";
+import axios from "axios";
 const initialCartState={
     showCart:false,
     cartItems:[],
@@ -50,4 +51,59 @@ const cartSlice = createSlice({
         }
     }
 })
+
+//action creators returns a function that does some action
+export const addToCartHandler = (data, cartItems) => {
+    return async (dispatch) => {
+      dispatch(uiActions.showNotification({
+        status: "pending",
+        title: "Sending",
+        message: "Sending cart data!"
+      }));
+  
+      const addToCart = async () =>{
+          let itemAlreadyInCart = false;
+          let item;
+          cartItems.forEach((element) => {
+            if (data.title === element.title) {
+              itemAlreadyInCart = true;
+              item = element;
+            }
+          });
+          if (itemAlreadyInCart) {
+            const { id, ...payload } = item;
+            const res = await axios.put(`https://ecommerce-18def-default-rtdb.firebaseio.com/cart/${id}.json`, { ...payload, quantity: payload.quantity + 1 });
+            
+            dispatch(cartActions.increase(data.title));
+            dispatch(uiActions.showNotification({
+              status: "success",
+              title: "Sent",
+              message: "Sent cart data successfully!"
+            }));
+          } else {
+            const res = await axios.post('https://ecommerce-18def-default-rtdb.firebaseio.com/cart.json', { ...data, quantity: 1 });
+            
+            dispatch(cartActions.addItems({ ...data, quantity: 1, id: res.data }));
+            dispatch(uiActions.showNotification({
+              status: "success",
+              title: "Sent",
+              message: "Sent cart data successfully!"
+            }));
+          }
+      }
+      
+  
+      try {
+        await addToCart();
+      } catch (err) {
+        console.log(err);
+        dispatch(uiActions.showNotification({
+          status: "error",
+          title: "Error!",
+          message: "Sending cart data failed!"
+        }));
+      }
+    };
+  };
+  
 export default cartSlice;
