@@ -32,9 +32,14 @@ const cartSlice = createSlice({
             })
         },
         decrease(state,action) {
-            state.cartItems.forEach((element) =>{
+            state.cartItems.forEach((element,index) =>{
                 if(element.title===action.payload){
-                    element.quantity-=1;
+                    if(element.quantity===1){
+                        state.cartItems.splice(index,1);
+                    }
+                    else {
+                        element.quantity-=1;
+                    }
                     
                 }
             })
