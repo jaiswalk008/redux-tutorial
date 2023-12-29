@@ -1,15 +1,16 @@
 // import {createStore} from 'redux';
 import { configureStore} from '@reduxjs/toolkit'
 import cartSlice from './cart';
-
+import uiSlice from './ui-slice';
 //creates a store by merging all the reducers
 export const store = configureStore({
     reducer : {
         cart:cartSlice.reducer,
+        ui:uiSlice.reducer,
     }
 })
 export const cartActions = cartSlice.actions;
-
+export const uiActions = uiSlice.actions;
 // const counterReducer = (state=initialState , action) =>{
 //     if (action.type === "Increment") {
 //         //return will replace the exisiting state and doesnot merges so thats why need to pass all the data

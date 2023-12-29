@@ -7,9 +7,13 @@ const initialCartState={
 const cartSlice = createSlice({
     name:'cart',
     initialState:initialCartState,
+    // NOTE: must not change state out of the reducer otherwise reducer will not about the change
     reducers:{
         toggleCart(state){
             state.showCart = !state.showCart;
+        },
+        setItem(state,action){
+            state.cartItems = action.payload;
         },
         addItems(state , action){
             let itemAlreadyInCart = false;
@@ -20,7 +24,7 @@ const cartSlice = createSlice({
                 }
             })
             if(!itemAlreadyInCart){
-                state.cartItems.push({...action.payload, quantity:1});
+                state.cartItems.push(action.payload);
             }
         },
         increase(state,action) {

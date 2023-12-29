@@ -1,9 +1,37 @@
 import classes from './CartItem.module.css';
 import { useDispatch } from 'react-redux';
 import {cartActions} from '../Store/store';
+import axios from 'axios';
 const CartItem = (props) => {
-  const { title, quantity, price } = props.item;
+  let { title, quantity, price , id } = props.item;
   const dispatch = useDispatch();
+  const changeQuantity = async (id , changeType) =>{
+    
+    try {
+      if(changeType==='increase') {
+        quantity++;
+        dispatch(cartActions.increase(title));
+      }
+    else{
+      if(quantity>0) {
+        quantity--;
+        dispatch(cartActions.decrease(title));
+      }
+    }
+    if(quantity>0){
+      const res = await axios.put(`https://ecommerce-18def-default-rtdb.firebaseio.com/cart/${id}.json`,{
+      title:title, price:price, quantity:quantity});
+      
+    }
+    else{
+      await axios.delete(`https://ecommerce-18def-default-rtdb.firebaseio.com/cart/${id}.json`);
+      console.log('delete');
+    }
+      // console.log(res.data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <li className={classes.item}>
       <header>
@@ -18,8 +46,8 @@ const CartItem = (props) => {
           x <span>{quantity}</span>
         </div>
         <div className={classes.actions}>
-          <button onClick={() => dispatch(cartActions.decrease(title))}>-</button>
-          <button onClick={() => dispatch(cartActions.increase(title))}>+</button>
+          <button onClick={() =>  changeQuantity(id,"decrease")}>-</button>
+          <button onClick={() => changeQuantity(id,"increase")}>+</button>
         </div>
       </div>
     </li>
